@@ -1,4 +1,40 @@
-﻿# Gitea 接口自动化测试项目
+﻿# Gitea 开源 Git 服务接口自动化测试框架（Python + pytest）
+
+> 覆盖用户/仓库/Issue 核心模块，支持数据驱动、数据库一致性校验、Allure 可视化报告
+
+## 快速开始
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/keweixin/gitea-api-test.git
+cd gitea-api-test
+
+# 2. 安装依赖
+pip install -r requirements.txt
+
+# 3. 启动 Gitea 服务
+docker-compose -f .github/ci/docker-compose.yml up -d
+
+# 4. 配置环境变量
+cp .env.example .env
+# 编辑 .env 填入你的 Gitea 地址和 Token
+
+# 5. 运行测试
+pytest -v
+```
+
+访问 http://localhost:3000 完成 Gitea 初始化，默认管理员账号：`admin_user` / `Admin123456`
+
+## 项目亮点
+
+- **分层架构设计**：API 层、测试层、数据层、工具层分离，代码结构清晰易维护
+- **数据驱动测试**：使用 YAML 文件管理测试数据，测试用例与数据解耦
+- **数据库一致性校验**：PyMySQL 直连数据库，验证接口返回与落库数据一致
+- **可视化报告**：集成 Allure + pytest-html，支持测试趋势分析和详细错误追踪
+- **CI/CD 集成**：GitHub Actions 自动触发测试，一键生成测试报告
+- **Docker 一键启动**：docker-compose 快速搭建 Gitea + MySQL 测试环境
+- **灵活的测试分组**：支持 smoke、db、user、repo、issue 等 marker 精确控制测试范围
+- **完整的测试覆盖**：22 个真实接口覆盖，包含正向和异常场景
 
 ## 项目概述
 
@@ -55,32 +91,34 @@ gitea-api-test/
 - pytest marker 分组执行
 - pytest HTML 报告与 Allure 报告生成
 
-## 接口覆盖范围
+## 接口覆盖矩阵
 
-当前真实覆盖的接口操作包括：
+| 序号 | 模块 | 接口路径 | 方法 | 正向用例 | 负向用例 |
+|:---:|:---:|:---|:---:|:---:|:---:|
+| 1 | 用户 | /user | GET | ✅ | - |
+| 2 | 用户 | /user/repos | GET | ✅ | - |
+| 3 | 用户 | /users/{username} | GET | ✅ | ✅ |
+| 4 | 用户 | /users/{username}/repos | GET | ✅ | - |
+| 5 | 仓库 | /user/repos | POST | ✅ | ✅ |
+| 6 | 仓库 | /repos/{owner}/{repo} | GET | ✅ | ✅ |
+| 7 | 仓库 | /repos/{owner}/{repo} | PATCH | ✅ | ✅ |
+| 8 | 仓库 | /repos/{owner}/{repo} | DELETE | ✅ | ✅ |
+| 9 | 仓库 | /repos/{owner}/{repo}/languages | GET | ✅ | - |
+| 10 | 仓库 | /repos/{owner}/{repo}/collaborators | GET | ✅ | - |
+| 11 | Issue | /repos/{owner}/{repo}/issues | POST | ✅ | ✅ |
+| 12 | Issue | /repos/{owner}/{repo}/issues | GET | ✅ | - |
+| 13 | Issue | /repos/{owner}/{repo}/issues/{index} | GET | ✅ | ✅ |
+| 14 | Issue | /repos/{owner}/{repo}/issues/{index} | PATCH | ✅ | ✅ |
+| 15 | Issue | /repos/{owner}/{repo}/labels | GET | ✅ | - |
+| 16 | Issue | /repos/{owner}/{repo}/labels | POST | ✅ | ✅ |
+| 17 | Issue | /repos/{owner}/{repo}/labels/{id} | GET | ✅ | - |
+| 18 | Issue | /repos/{owner}/{repo}/labels/{id} | DELETE | ✅ | ✅ |
+| 19 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | POST | ✅ | - |
+| 20 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | GET | ✅ | - |
+| 21 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | PUT | ✅ | - |
+| 22 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | DELETE | ✅ | - |
 
-1. `GET /user`
-2. `GET /user/repos`
-3. `GET /users/{username}`
-4. `GET /users/{username}/repos`
-5. `POST /user/repos`
-6. `GET /repos/{owner}/{repo}`
-7. `PATCH /repos/{owner}/{repo}`
-8. `DELETE /repos/{owner}/{repo}`
-9. `GET /repos/{owner}/{repo}/languages`
-10. `GET /repos/{owner}/{repo}/collaborators`
-11. `POST /repos/{owner}/{repo}/issues`
-12. `GET /repos/{owner}/{repo}/issues`
-13. `GET /repos/{owner}/{repo}/issues/{index}`
-14. `PATCH /repos/{owner}/{repo}/issues/{index}`
-15. `GET /repos/{owner}/{repo}/labels`
-16. `POST /repos/{owner}/{repo}/labels`
-17. `GET /repos/{owner}/{repo}/labels/{id}`
-18. `DELETE /repos/{owner}/{repo}/labels/{id}`
-19. `POST /repos/{owner}/{repo}/issues/{index}/labels`
-20. `GET /repos/{owner}/{repo}/issues/{index}/labels`
-21. `PUT /repos/{owner}/{repo}/issues/{index}/labels`
-22. `DELETE /repos/{owner}/{repo}/issues/{index}/labels`
+**总计**：22 个接口 | 24 个正向用例 | 12+ 个负向用例
 
 ## 测试执行方式
 
