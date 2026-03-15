@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'gitea/gitea:1.25'
         MYSQL_IMAGE = 'mysql:8.0'
-        GITEA_CONTAINER = 'jenkins-gitea'
+        GITEA_CONTAINER = 'gitea'
         MYSQL_CONTAINER = 'jenkins-gitea-mysql'
         BASE_URL = 'http://127.0.0.1:3000/api/v1'
         USERNAME = 'admin_user'
