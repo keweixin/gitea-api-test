@@ -66,7 +66,6 @@ jobs:
       - name: Bootstrap test data
         id: bootstrap
         run: |
-          # Create admin user
           docker compose -f docker-compose.yml exec -T gitea gitea admin user create \
             --username admin_user \
             --password Admin123456 \
@@ -76,36 +75,20 @@ jobs:
 
           sleep 10
 
-          # Create API token
-          TOKEN_RESPONSE=$(curl -sS \
-            -u admin_user:Admin123456 \
-            -H "Content-Type: application/json" \
-            -d '{"name":"ci-token"}' \
-            http://127.0.0.1:3000/api/v1/users/admin_user/tokens 2>&1)
-
+          TOKEN_RESPONSE=$(curl -sS -u admin_user:Admin123456 -H "Content-Type: application/json" -d '{"name":"ci-token"}' http://127.0.0.1:3000/api/v1/users/admin_user/tokens 2>&1)
           echo "Token response: $TOKEN_RESPONSE"
 
-          # Extract token using Python
-          TOKEN=$(echo "$TOKEN_RESPONSE" > /tmp/token.json && python3 -c "
-import json
-with open('/tmp/token.json') as f:
-    data = json.load(f)
-    print(data.get('sha1', data.get('token', '')))
-" 2>/dev/null || echo "")
+          TOKEN=$(echo "$TOKEN_RESPONSE" | grep -o '"sha1":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+          if [ -z "$TOKEN" ]; then
+            TOKEN=$(echo "$TOKEN_RESPONSE" | grep -o '"token":"[^"]*"' | head -1 | cut -d'"' -f4 || echo "")
+          fi
 
           if [ -z "$TOKEN" ]; then
-            echo "::warning::Failed to create token, using fallback"
+            echo "::warning::Failed to create token"
             echo "token=fallback" >> "$GITHUB_OUTPUT"
           else
             echo "::add-mask::$TOKEN"
-
-            # Create test repo
-            curl -sS -o /tmp/repo.json -w "%{http_code}" \
-              -H "Authorization: token $TOKEN" \
-              -H "Content-Type: application/json" \
-              -d '{"name":"repo-demo-public","description":"ci test","private":false}' \
-              http://127.0.0.1:3000/api/v1/user/repos || true
-
+            curl -sS -o /tmp/repo.json -w "%{http_code}" -H "Authorization: token $TOKEN" -H "Content-Type: application/json" -d '{"name":"repo-demo-public","description":"ci test","private":false}' http://127.0.0.1:3000/api/v1/user/repos || true
             echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
           fi
 
