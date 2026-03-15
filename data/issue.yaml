@@ -1,0 +1,10 @@
+create_issue_cases:
+  - title: create issue with valid title
+    issue_title_type: random
+    body: created by pytest data driven
+    expected_status: 201
+
+  - title: create issue with empty title
+    issue_title_type: empty
+    body: invalid issue
+    expected_status: 422

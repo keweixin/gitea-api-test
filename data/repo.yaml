@@ -1,0 +1,18 @@
+create_repo_cases:
+  - title: create repo with valid name
+    name_type: random
+    description: created by pytest data driven
+    private: false
+    expected_status: 201
+
+  - title: create repo with empty name
+    name_type: empty
+    description: invalid repo
+    private: false
+    expected_status: 422
+
+  - title: create repo with duplicate name
+    name_type: duplicate
+    description: duplicate repo
+    private: false
+    expected_status: 409

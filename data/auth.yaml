@@ -1,0 +1,14 @@
+get_current_user_cases:
+  - title: valid token should get current user
+    headers_type: valid
+    expected_status: 200
+    expected_login_not_empty: true
+
+  - title: no token should fail to get current user
+    headers_type: none
+    expected_status: 401
+
+  - title: fake token should fail to get current user
+    headers_type: invalid
+    expected_status: 401
+
