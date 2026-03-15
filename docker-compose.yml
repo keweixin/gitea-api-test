@@ -20,7 +20,7 @@ services:
 
   gitea:
     image: docker.gitea.com/gitea:1.25.4
-    container_name: ci-gitea
+    container_name: jenkins-gitea
     depends_on:
       db:
         condition: service_healthy
