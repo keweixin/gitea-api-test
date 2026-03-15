@@ -1,58 +1,30 @@
-﻿# Gitea 开源 Git 服务接口自动化测试框架（Python + pytest）
+# Gitea 接口自动化测试项目
 
 [![CI](https://github.com/keweixin/gitea-api-test/actions/workflows/ci.yml/badge.svg)](https://github.com/keweixin/gitea-api-test/actions/workflows/ci.yml)
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-> 覆盖用户/仓库/Issue 核心模块，支持数据驱动、数据库一致性校验、Allure 可视化报告
-
-## 快速开始
-
-```bash
-# 1. 克隆项目
-git clone https://github.com/keweixin/gitea-api-test.git
-cd gitea-api-test
-
-# 2. 安装依赖
-pip install -r requirements.txt
-
-# 3. 启动 Gitea 服务
-docker-compose up -d
-
-# 4. 配置环境变量
-cp .env.example .env
-# 编辑 .env 填入你的 Gitea 地址和 Token
-
-# 5. 运行测试
-pytest -v
-```
-
-访问 http://localhost:3000 完成 Gitea 初始化，默认管理员账号：`admin_user` / `Admin123456`
-
-## 项目亮点
-
-- **分层架构设计**：API 层、测试层、数据层、工具层分离，代码结构清晰易维护
-- **数据驱动测试**：使用 YAML 文件管理测试数据，测试用例与数据解耦
-- **数据库一致性校验**：PyMySQL 直连数据库，验证接口返回与落库数据一致
-- **可视化报告**：集成 Allure + pytest-html，支持测试趋势分析和详细错误追踪
-- **CI/CD 集成**：GitHub Actions 自动触发测试，一键生成测试报告
-- **Docker 一键启动**：docker-compose 快速搭建 Gitea + MySQL 测试环境
-- **灵活的测试分组**：支持 smoke、db、user、repo、issue 等 marker 精确控制测试范围
-- **完整的测试覆盖**：22 个真实接口覆盖，包含正向和异常场景
+> 基于 Python + pytest 构建的 Gitea 接口自动化测试项目，覆盖用户、仓库、Issue 三个核心模块，包含数据驱动、数据库一致性校验、报告生成与 CI 持续验证能力。
 
 ## 项目概述
 
-本项目基于 Gitea 真实业务接口构建，定位为一套可运行、可扩展、可展示的接口自动化测试项目。项目围绕用户、仓库、Issue 三个核心业务模块展开，覆盖接口调用、数据驱动、数据库校验、分组执行以及测试报告生成等关键能力。
+本项目以 Gitea 真实业务接口为测试对象，围绕用户信息、仓库管理、Issue 与标签管理等核心场景，搭建了一套可运行、可扩展、可展示的接口自动化测试框架。项目目标不是简单验证状态码，而是通过分层设计、数据驱动、数据库校验和持续集成，完整体现接口自动化测试项目的落地过程。
 
-## 项目目标
+## 项目亮点
 
-项目重点验证以下内容：
+- 分层设计清晰：拆分为配置层、请求层、API 封装层、测试层和数据层，便于维护与扩展。
+- 数据驱动测试：使用 YAML 维护测试数据，减少重复代码，便于新增场景。
+- 数据库一致性校验：通过 PyMySQL 验证关键业务动作是否真正落库。
+- 报告输出完整：支持 pytest HTML 报告与 Allure 报告。
+- CI 持续验证：接入 GitHub Actions，提交后自动完成环境启动、测试执行与报告产物上传。
 
-- 用户相关接口的鉴权与信息获取能力
-- 仓库相关接口的增删改查与扩展查询能力
-- Issue 相关接口的创建、查询、状态流转与标签能力
-- 接口返回结果与数据库落库结果的一致性
-- 自动化测试结果的可视化输出能力
+## 当前成果
+
+- 34 条自动化测试用例
+- 22 个真实接口操作覆盖
+- 3 个核心业务模块覆盖
+- 2 条数据库一致性校验
+- 支持 `smoke`、`db`、`auth`、`repo`、`issue` 等 marker 分组执行
 
 ## 技术栈
 
@@ -62,14 +34,16 @@ pytest -v
 - PyYAML
 - PyMySQL
 - python-dotenv
-- allure-pytest
 - pytest-html
+- allure-pytest
+- Docker Compose
+- GitHub Actions
 
 ## 项目结构
 
 ```text
 gitea-api-test/
-├─ api/                  # 接口封装层
+├─ api/                  # 业务接口封装层
 ├─ common/               # 配置、请求封装、数据库工具
 ├─ data/                 # YAML 测试数据
 ├─ docs/                 # 项目说明文档
@@ -78,64 +52,31 @@ gitea-api-test/
 ├─ utils/                # 工具方法
 ├─ conftest.py           # 公共 fixture
 ├─ pytest.ini            # pytest 标记配置
+├─ docker-compose.yml    # Gitea + MySQL 本地环境
 ├─ requirements.txt      # 项目依赖
 ├─ .env.example          # 环境变量模板
 └─ README.md
 ```
 
-## 当前成果
-
-当前项目已完成以下结果：
-
-- 24 条自动化测试用例
-- 22 个真实接口操作覆盖
-- 3 个核心业务模块覆盖
-- 2 条数据库一致性校验
-- YAML 数据驱动测试
-- pytest marker 分组执行
-- pytest HTML 报告与 Allure 报告生成
-
-## 接口覆盖矩阵
-
-| 序号 | 模块 | 接口路径 | 方法 | 正向用例 | 负向用例 |
-|:---:|:---:|:---|:---:|:---:|:---:|
-| 1 | 用户 | /user | GET | ✅ | - |
-| 2 | 用户 | /user/repos | GET | ✅ | - |
-| 3 | 用户 | /users/{username} | GET | ✅ | ✅ |
-| 4 | 用户 | /users/{username}/repos | GET | ✅ | - |
-| 5 | 仓库 | /user/repos | POST | ✅ | ✅ |
-| 6 | 仓库 | /repos/{owner}/{repo} | GET | ✅ | ✅ |
-| 7 | 仓库 | /repos/{owner}/{repo} | PATCH | ✅ | ✅ |
-| 8 | 仓库 | /repos/{owner}/{repo} | DELETE | ✅ | ✅ |
-| 9 | 仓库 | /repos/{owner}/{repo}/languages | GET | ✅ | - |
-| 10 | 仓库 | /repos/{owner}/{repo}/collaborators | GET | ✅ | - |
-| 11 | Issue | /repos/{owner}/{repo}/issues | POST | ✅ | ✅ |
-| 12 | Issue | /repos/{owner}/{repo}/issues | GET | ✅ | - |
-| 13 | Issue | /repos/{owner}/{repo}/issues/{index} | GET | ✅ | ✅ |
-| 14 | Issue | /repos/{owner}/{repo}/issues/{index} | PATCH | ✅ | ✅ |
-| 15 | Issue | /repos/{owner}/{repo}/labels | GET | ✅ | - |
-| 16 | Issue | /repos/{owner}/{repo}/labels | POST | ✅ | ✅ |
-| 17 | Issue | /repos/{owner}/{repo}/labels/{id} | GET | ✅ | - |
-| 18 | Issue | /repos/{owner}/{repo}/labels/{id} | DELETE | ✅ | ✅ |
-| 19 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | POST | ✅ | - |
-| 20 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | GET | ✅ | - |
-| 21 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | PUT | ✅ | - |
-| 22 | Issue | /repos/{owner}/{repo}/issues/{index}/labels | DELETE | ✅ | - |
-
-**总计**：22 个接口 | 24 个正向用例 | 12+ 个负向用例
-
-## 测试执行方式
-
-执行全部自动化测试：
+## 快速开始
 
 ```bash
+git clone https://github.com/keweixin/gitea-api-test.git
+cd gitea-api-test
+pip install -r requirements.txt
+docker-compose up -d
+cp .env.example .env
 pytest -v
 ```
 
-执行数据库校验：
+访问 `http://localhost:3000` 完成 Gitea 初始化。默认管理员账号为 `admin_user`，密码为 `Admin123456`。
+
+## 测试执行
+
+执行全部测试：
 
 ```bash
-pytest -m db -v
+pytest -v
 ```
 
 执行核心 smoke 场景：
@@ -144,7 +85,13 @@ pytest -m db -v
 pytest -m smoke -v
 ```
 
-## 报告生成方式
+执行数据库校验场景：
+
+```bash
+pytest -m db -v
+```
+
+## 报告生成
 
 生成 pytest HTML 报告与 Allure 原始结果：
 
@@ -158,12 +105,6 @@ pytest -v --html=reports/pytest-report.html --self-contained-html --alluredir=al
 allure generate allure-results -o allure-report --clean
 ```
 
-打开 Allure 报告：
-
-```bash
-allure open allure-report
-```
-
 ## 文档索引
 
 - [文档说明总览](docs/README.md)
@@ -171,8 +112,8 @@ allure open allure-report
 - [数据库校验说明](docs/db-validation.md)
 - [项目亮点总结](docs/project-highlights.md)
 - [Allure 报告说明](docs/allure-report-guide.md)
+- [CI 工作流说明](docs/ci-workflow.md)
 
 ## 项目价值
 
-本项目已经具备较完整的自动化测试项目形态：既包含接口分层封装、数据驱动和数据库校验，也包含测试分组执行与报告输出，能够较完整地体现初级自动化测试 / 测试开发岗位所需的项目能力。
-# Test commit
+本项目已经具备较完整的小型接口自动化测试项目形态，能够体现接口自动化测试在分层设计、数据驱动、数据库校验、结果展示和持续集成方面的综合能力，适合作为自动化测试/测试开发方向的项目实践案例。

@@ -1,33 +1,28 @@
-﻿# 文档说明总览
+# 文档说明总览
 
-本目录用于展示项目的结构说明、自动化覆盖范围、数据库校验能力、项目亮点以及报告生成方式。目录内文档面向项目评审、简历查看与面试阅读场景进行整理。
+`docs` 目录用于展示项目的覆盖范围、数据库校验能力、核心设计亮点、报告输出方式和 CI 工作流，面向 GitHub 展示、项目复盘和面试交流场景进行整理。
 
 ## 文档列表
 
-### 1. [自动化覆盖说明](automation-coverage.md)
+1. [自动化覆盖说明](automation-coverage.md)  
+   说明项目当前覆盖的模块、接口和测试场景。
 
-说明当前项目已经覆盖的模块、场景和接口操作，重点展示测试范围与项目完成度。
+2. [数据库校验说明](db-validation.md)  
+   说明关键数据库校验场景及其验证方式。
 
-### 2. [数据库校验说明](db-validation.md)
+3. [项目亮点总结](project-highlights.md)  
+   总结项目中最具代表性的设计与实现亮点。
 
-说明当前项目已完成的数据库一致性校验能力，重点展示接口测试结果与数据库落库结果的联合验证方式。
+4. [Allure 报告说明](allure-report-guide.md)  
+   说明测试报告生成方式和结果展示能力。
 
-### 3. [项目亮点总结](project-highlights.md)
+5. [CI 工作流说明](ci-workflow.md)  
+   说明 GitHub Actions 如何自动执行测试与输出报告。
 
-概括项目最具代表性的能力点，展示项目设计思路与实现重点。
+## 推荐阅读顺序
 
-### 4. [Allure 报告说明](allure-report-guide.md)
-
-说明项目的报告生成方式和报告输出结果，展示测试执行结果的可视化能力。
-
-## 阅读顺序
-
-1. 仓库根目录 `README.md`
+1. [README.md](../README.md)
 2. [自动化覆盖说明](automation-coverage.md)
 3. [数据库校验说明](db-validation.md)
 4. [项目亮点总结](project-highlights.md)
-5. [Allure 报告说明](allure-report-guide.md)
-
-## 文档定位
-
-当前 `docs` 目录围绕项目成果、测试覆盖、设计亮点和展示结果进行整理，用于支撑 GitHub 展示和面试交流。
+5. [CI 工作流说明](ci-workflow.md)
