@@ -1,0 +1,8 @@
+allure-pytest
+cryptography
+PyMySQL
+PyYAML
+pytest
+pytest-html
+python-dotenv
+requests
