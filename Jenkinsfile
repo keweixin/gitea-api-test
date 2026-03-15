@@ -6,6 +6,21 @@ pipeline {
         MYSQL_IMAGE = 'mysql:8.0'
         GITEA_CONTAINER = 'jenkins-gitea'
         MYSQL_CONTAINER = 'jenkins-gitea-mysql'
+        BASE_URL = 'http://127.0.0.1:3000/api/v1'
+        USERNAME = 'admin_user'
+        PASSWORD = 'Admin123456'
+        OWNER = 'admin_user'
+        PUBLIC_USER = 'admin_user'
+        REPO_NAME_BASE = 'repo-demo-public'
+        REPO_NAME_TEMP = 'repo-demo-temp'
+        PRIVATE_REPO_NAME = 'repo-demo-private'
+        COLLABORATOR = 'admin_user'
+        MYSQL_HOST = '127.0.0.1'
+        MYSQL_PORT = '3308'
+        MYSQL_USER = 'gitea'
+        MYSQL_PASSWORD = 'gitea_secure_password'
+        MYSQL_DB = 'gitea'
+        TOKEN = credentials('gitea-token')
     }
 
     stages {
@@ -100,27 +115,24 @@ pipeline {
                         # Wait for user creation
                         sleep 5
 
-                        # Create API token
-                        TOKEN_RESPONSE=\$(curl -sS -u admin_user:Admin123456 \
-                            -H "Content-Type: application/json" \
-                            -d '{"name":"jenkins-token"}' \
-                            http://127.0.0.1:3000/api/v1/users/admin_user/tokens)
-
-                        echo "Token response: \${TOKEN_RESPONSE}"
-
-                        # Extract token
-                        GITEA_TOKEN=\$(echo \${TOKEN_RESPONSE} | python3 -c "import json,sys; print(json.load(sys.stdin).get('sha1',''))" 2>/dev/null || echo "")
-
-                        if [ -z "\${GITEA_TOKEN}" ]; then
-                            echo "Warning: Failed to create token, trying to get existing one"
+                        if [ -z "\${TOKEN}" ]; then
+                            echo "Missing Jenkins credential: gitea-token"
+                            exit 1
                         fi
 
                         # Create test repository
-                        curl -sS -X POST \
-                            -H "Authorization: token \${GITEA_TOKEN}" \
+                        STATUS=\$(curl -sS -o /tmp/repo.json -w "%{http_code}" \
+                            -X POST \
+                            -H "Authorization: token \${TOKEN}" \
                             -H "Content-Type: application/json" \
                             -d '{"name":"repo-demo-public","description":"created by jenkins","private":false}' \
-                            http://127.0.0.1:3000/api/v1/user/repos || true
+                            http://127.0.0.1:3000/api/v1/user/repos)
+
+                        if [ "\${STATUS}" != "201" ] && [ "\${STATUS}" != "200" ] && [ "\${STATUS}" != "409" ]; then
+                            echo "Failed to create base repository, status=\${STATUS}"
+                            cat /tmp/repo.json
+                            exit 1
+                        fi
                     """
                 }
             }
@@ -137,20 +149,14 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                script {
-                    withCredentials([string(credentialsId: 'gitea-token', variable: 'GITEA_TOKEN')]) {
-                        sh '''
-                            mkdir -p reports allure-results
-
-                            pytest -v \
-                                --html=reports/pytest-report.html \
-                                --self-contained-html \
-                                --alluredir=allure-results \
-                                -m "not db" \
-                                || true
-                        '''
-                    }
-                }
+                sh '''
+                    mkdir -p reports allure-results
+                    pytest -v \
+                        --html=reports/pytest-report.html \
+                        --self-contained-html \
+                        --alluredir=allure-results \
+                        -m "not db"
+                '''
             }
         }
 
