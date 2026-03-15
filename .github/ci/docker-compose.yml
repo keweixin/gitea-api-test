@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: ci-gitea-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secure_password
+      MYSQL_DATABASE: gitea
+      MYSQL_USER: gitea
+      MYSQL_PASSWORD: gitea_secure_password
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3308:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_secure_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  gitea:
+    image: docker.gitea.com/gitea:1.25.4
+    container_name: ci-gitea
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      USER_UID: 1000
+      USER_GID: 1000
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__database__DB_TYPE: mysql
+      GITEA__database__HOST: db:3306
+      GITEA__database__NAME: gitea
+      GITEA__database__USER: gitea
+      GITEA__database__PASSWD: gitea_secure_password
+      GITEA__server__ROOT_URL: http://127.0.0.1:3000/
