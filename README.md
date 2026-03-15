@@ -171,7 +171,6 @@ allure open allure-report
 - [数据库校验说明](docs/db-validation.md)
 - [项目亮点总结](docs/project-highlights.md)
 - [Allure 报告说明](docs/allure-report-guide.md)
-- [Git 提交规范说明](docs/git-commit-guide.md)
 
 ## 项目价值
 
