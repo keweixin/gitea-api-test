@@ -1,5 +1,9 @@
 ﻿# Gitea 开源 Git 服务接口自动化测试框架（Python + pytest）
 
+[![CI](https://github.com/keweixin/gitea-api-test/actions/workflows/ci.yml/badge.svg)](https://github.com/keweixin/gitea-api-test/actions/workflows/ci.yml)
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 > 覆盖用户/仓库/Issue 核心模块，支持数据驱动、数据库一致性校验、Allure 可视化报告
 
 ## 快速开始
