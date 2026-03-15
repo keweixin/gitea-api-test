@@ -13,7 +13,7 @@ cd gitea-api-test
 pip install -r requirements.txt
 
 # 3. 启动 Gitea 服务
-docker-compose -f .github/ci/docker-compose.yml up -d
+docker-compose up -d
 
 # 4. 配置环境变量
 cp .env.example .env

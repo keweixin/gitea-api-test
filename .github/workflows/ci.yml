@@ -39,7 +39,7 @@ jobs:
         run: npm install -g allure-commandline
 
       - name: Start Gitea and MySQL
-        run: docker compose -f .github/ci/docker-compose.yml up -d
+        run: docker compose -f docker-compose.yml up -d
 
       - name: Wait for Gitea
         shell: bash
@@ -51,7 +51,7 @@ jobs:
             fi
             sleep 5
           done
-          docker compose -f .github/ci/docker-compose.yml logs
+          docker compose -f docker-compose.yml logs
           exit 1
 
       - name: Bootstrap test data
@@ -125,8 +125,8 @@ jobs:
 
       - name: Show docker logs on failure
         if: failure()
-        run: docker compose -f .github/ci/docker-compose.yml logs
+        run: docker compose -f docker-compose.yml logs
 
       - name: Stop services
         if: always()
-        run: docker compose -f .github/ci/docker-compose.yml down -v
+        run: docker compose -f docker-compose.yml down -v
