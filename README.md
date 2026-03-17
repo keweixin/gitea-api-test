@@ -45,7 +45,6 @@ gitea-api-test/
 ├─ common/               # 配置、请求封装、数据库工具
 ├─ data/                 # YAML 测试数据
 ├─ docs/                 # 项目说明文档
-├─ reports/              # pytest HTML 报告
 ├─ testcases/            # pytest 测试用例
 ├─ utils/                # 工具方法
 ├─ conftest.py           # 公共 fixture
